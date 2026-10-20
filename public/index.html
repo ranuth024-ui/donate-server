@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/common.js"></script>
+    <style>
+        :root {
+            --bg-main: #0d0b1a;
+            --bg-card: #161329;
+            --bg-input: #1c1835;
+            --border: #2a2545;
+            --text-main: #F5F3FA;
+            --text-muted: #9C93B5;
+            --accent-pink: #EC4899;
+            --accent-pink-hover: #DB2777;
+            --accent-purple: #8B5CF6;
+            --gold: #FBBF24;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+        input, textarea { outline: none; border: none; font-family: inherit; }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(22, 19, 41, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-brand .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            object-fit: cover;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Profile Section */
+        .profile {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .cover-banner {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(236,72,153,0.8), rgba(139,92,246,0.8));
+            position: relative;
+        }
+
+        .cover-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M20 33.3333C20 33.3333 7.5 23.3333 7.5 14.1667C7.5 11.2928 8.64166 8.5369 10.6733 6.50532C12.7049 4.47374 15.4609 3.33333 18.3333 3.33333C19.5161 3.33333 20.6872 3.68412 21.6667 4.33333C22.6461 3.68412 23.8172 3.33333 25 3.33333C27.8724 3.33333 30.6284 4.47374 32.6599 6.50532C34.6915 8.5369 35.8333 11.2928 35.8333 14.1667C35.8333 23.3333 23.3333 33.3333 23.3333 33.3333L20 36.6667L16.6667 33.3333Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 60px;
+            opacity: 0.5;
+        }
+
+        .profile-info {
+            padding: 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: -60px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--bg-card);
+            background: var(--bg-input);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-username {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .profile-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-profile {
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            transition: 0.2s;
+        }
+
+        .btn-profile.primary {
+            background: var(--text-main);
+            color: var(--bg-main);
+        }
+
+        .btn-profile:hover {
+            opacity: 0.9;
+        }
+
+        /* Layout */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Donate Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent-pink);
+        }
+
+        .amount-chips {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .chip:hover, .chip.active {
+            background: var(--accent-pink);
+            border-color: var(--accent-pink);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .btn-donate {
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+            transition: 0.2s;
+        }
+
+        .btn-donate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        /* VIP Progress */
+        .vip-progress {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .vip-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .vip-track {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .vip-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            width: 0%;
+            border-radius: 4px;
+        }
+
+        /* Leaderboard */
+        .tabs {
+            display: flex;
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        .tab.active {
+            background: var(--bg-card);
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .lb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .lb-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .lb-item:last-child {
+            border-bottom: none;
+        }
+
+        .lb-rank {
+            width: 24px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .lb-rank.top-1 { color: var(--gold); font-size: 1.2rem; }
+        .lb-rank.top-2 { color: #E5E7EB; font-size: 1.1rem; }
+        .lb-rank.top-3 { color: #D97706; font-size: 1rem; }
+
+        .lb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .lb-info {
+            flex: 1;
+        }
+
+        .lb-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .vip-badge {
+            font-size: 0.7rem;
+            background: linear-gradient(135deg, var(--gold), #D97706);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .lb-amount {
+            color: var(--accent-pink);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* Recent Donations */
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .recent-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .recent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .recent-content {
+            flex: 1;
+        }
+
+        .recent-header {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .recent-header b {
+            color: var(--text-main);
+        }
+
+        .recent-header span {
+            color: var(--text-muted);
+        }
+
+        .recent-message {
+            background: var(--bg-input);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border-top-left-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .recent-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Modal 1 */
+        .payment-option {
+            border: 1px solid var(--accent-pink);
+            background: rgba(236, 72, 153, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-info strong {
+            display: block;
+            font-size: 1rem;
+        }
+        
+        .payment-info span {
+            color: var(--accent-pink);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .btn-cancel {
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-cancel:hover { background: #2a2545; }
+
+        .btn-continue {
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            color: white;
+            border: none;
+        }
+
+        /* Modal 2 */
+        .amount-box {
+            text-align: center;
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .amount-box-title {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .amount-box-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-pink);
+        }
+
+        .qr-container {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin: 0 auto;
+        }
+
+        .bank-details {
+            background: var(--bg-input);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .bank-row:last-child {
+            border-bottom: none;
+        }
+
+        .bank-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .bank-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copy {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-copy:hover {
+            color: var(--accent-pink);
+            border-color: var(--accent-pink);
+        }
+
+        .btn-download-qr {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .btn-download-qr:hover {
+            background: #2a2545;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+            background: rgba(245, 243, 250, 0.1);
+        }
+        .status-badge.waiting { color: var(--gold); }
+        .status-badge.success { color: var(--success); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <div class="logo">Z</div>
+            <span id="nav-brand-name">Zypage</span>
+        </a>
+        <div class="nav-actions">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); cursor: pointer;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <a href="/admin.html">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239C93B5'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" id="nav-avatar" class="nav-avatar" alt="Avatar">
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Profile -->
+        <div class="profile">
+            <div class="cover-banner" id="profile-cover"></div>
+            <div class="profile-info">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239C93B5'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" id="profile-avatar" class="profile-avatar" alt="Avatar">
+                <h1 class="profile-name" id="profile-name">...</h1>
+                <div class="profile-username" id="profile-username">@username · 📍 Location</div>
+                <div class="profile-stats">
+                    <span><strong id="stat-followers">0</strong> Người theo dõi</span>
+                    <span><strong id="stat-donations">0</strong> Lượt Donate</span>
+                </div>
+                <div class="profile-buttons">
+                    <button class="btn-profile primary">Nhắn tin</button>
+                    <button class="btn-profile">Theo dõi</button>
+                    <button class="btn-profile">Thông tin</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <!-- Left Column -->
+            <div class="left-col">
+                <!-- Donate Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-pink)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        Donate
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tên hiển thị</label>
+                        <input type="text" class="form-input" id="input-name" placeholder="Nhập tên của bạn">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Số tiền (VND)</label>
+                        <input type="number" class="form-input" id="input-amount" placeholder="Nhập số tiền">
+                        <div class="amount-chips" id="amount-chips">
+                            <div class="chip" data-val="10000">10k</div>
+                            <div class="chip" data-val="20000">20k</div>
+                            <div class="chip" data-val="50000">50k</div>
+                            <div class="chip" data-val="100000">100k</div>
+                            <div class="chip" data-val="200000">200k</div>
+                            <div class="chip" data-val="500000">500k</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Lời nhắn (Tùy chọn)</label>
+                        <textarea class="form-input" id="input-message" rows="3" placeholder="Nhập lời nhắn của bạn..."></textarea>
+                        <div class="char-count"><span id="char-count-val">0</span>/255</div>
+                    </div>
+
+                    <button class="btn-donate" id="btn-donate" onclick="openModal1()">DONATE</button>
+
+                    <div class="vip-progress" style="display:none;" id="vip-progress-container">
+                        <div class="vip-header">
+                            <span id="vip-current">VIP 0</span>
+                            <span id="vip-text" style="color:var(--text-muted);font-size:0.8rem">...</span>
+                            <span id="vip-next">VIP 1</span>
+                        </div>
+                        <div class="vip-track">
+                            <div class="vip-fill" id="vip-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M2 4h20M2 8h20M4 8l3 12h10l3-12M12 8v12"></path></svg>
+                        BẢNG XẾP HẠNG
+                    </div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="ngay">Ngày</div>
+                        <div class="tab" data-tab="thang">Tháng</div>
+                        <div class="tab" data-tab="tong">Tổng</div>
+                    </div>
+
+                    <div class="lb-list" id="lb-list">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-col">
+                <div class="card">
+                    <div class="card-title" style="justify-content: space-between;">
+                        GẦN ĐÂY
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="cursor:pointer;" onclick="loadData()"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    </div>
+                    
+                    <div class="recent-list" id="recent-list">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1: Select Payment Method -->
+    <div class="modal-overlay" id="modal-1">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Chọn phương thức thanh toán</h3>
+                <p class="modal-subtitle">Thanh toán cho <span id="m1-brand">...</span></p>
+            </div>
+            <div class="modal-body">
+                <div class="payment-option">
+                    <div class="payment-icon">🏛️</div>
+                    <div class="payment-info">
+                        <strong>Chuyển khoản ngân hàng</strong>
+                        <span id="m1-amount">0 VND</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('modal-1')">Hủy</button>
+                <button class="btn-modal btn-continue" onclick="openModal2()">Tiếp tục thanh toán →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Payment Details -->
+    <div class="modal-overlay" id="modal-2">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Thanh toán đơn hàng</h3>
+                <p class="modal-subtitle">Kiểm tra thông tin trước khi hoàn tất giao dịch.</p>
+            </div>
+            <div class="modal-body" style="padding-top: 16px;">
+                <div class="amount-box">
+                    <div class="amount-box-title">Tổng cần thanh toán</div>
+                    <div class="amount-box-value" id="m2-amount">0 <span style="font-size:1rem;color:var(--text-main);">VND</span></div>
+                    <div class="status-badge waiting" id="m2-status">Đang chờ thanh toán...</div>
+                </div>
+
+                <div class="qr-container">
+                    <img src="" id="m2-qr" class="qr-image" alt="QR Code">
+                </div>
+
+                <div class="bank-details">
+                    <div class="bank-row">
+                        <span class="bank-label">Ngân hàng</span>
+                        <div class="bank-value">
+                            <span id="m2-bank-name">...</span>
+                        </div>
+                    </div>
+                    <div class="bank-row">
+                        <span class="bank-label">Chủ tài khoản</span>
+                        <div class="bank-value">
+                            <span id="m2-account-name">...</span>
+                        </div>
+                    </div>
+                    <div class="bank-row">
+                        <span class="bank-label">Số tài khoản</span>
+                        <div class="bank-value">
+                            <span id="m2-account-no">...</span>
+                            <button class="btn-copy" onclick="copyData('m2-account-no')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                        </div>
+                    </div>
+                    <div class="bank-row">
+                        <span class="bank-label">Nội dung thanh toán</span>
+                        <div class="bank-value">
+                            <span id="m2-content">...</span>
+                            <button class="btn-copy" onclick="copyData('m2-content')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-download-qr" onclick="downloadQR()">Tải mã QR</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('modal-2')">Hủy</button>
+                <button class="btn-modal btn-continue" onclick="closeModal('modal-2')">Tôi đã thanh toán →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        let currentMaDon = '';
+        let statusInterval = null;
+        let lbData = { ngay: [], thang: [], tong: [] };
+        let activeLbTab = 'ngay';
+        
+        // Load remembered name
+        const savedName = localStorage.getItem('dn_ten');
+        if (savedName) document.getElementById('input-name').value = savedName;
+
+        // Form events
+        document.getElementById('input-message').addEventListener('input', function(e) {
+            let val = e.target.value;
+            if (val.length > 255) {
+                val = val.substring(0, 255);
+                e.target.value = val;
+            }
+            document.getElementById('char-count-val').innerText = val.length;
+        });
+
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.getElementById('input-amount').value = this.dataset.val;
+            });
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                activeLbTab = this.dataset.tab;
+                renderLeaderboard();
+            });
+        });
+
+        async function loadData() {
+            try {
+                const res = await DonateCommon.goi('/api/data');
+                if (res) {
+                    currentData = res;
+                    lbData = res.xepHang || { ngay: [], thang: [], tong: [] };
+                    updateUI(res);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function updateUI(data) {
+            const ch = data.cauHinh || {};
+            
+            // Header/Nav
+            document.title = (ch.tenHienThi || 'Donate') + ' - Donate';
+            document.getElementById('nav-brand-name').innerText = ch.tenHienThi || 'Donate';
+            
+            if (ch.anhDaiDien) {
+                document.getElementById('nav-avatar').src = ch.anhDaiDien;
+                document.getElementById('profile-avatar').src = ch.anhDaiDien;
+            }
+            if (ch.anhBia) {
+                document.getElementById('profile-cover').style.backgroundImage = `url(${ch.anhBia})`;
+            }
+
+            // Profile info
+            document.getElementById('profile-name').innerText = ch.tenHienThi || 'Zypage';
+            document.getElementById('profile-username').innerText = `@${ch.tenDangNhap || 'username'} · 📍 ${ch.diaDiem || 'Viet Nam'}`;
+            
+            // Stats
+            if (data.thongKe) {
+                document.getElementById('stat-donations').innerText = data.thongKe.soLuot || 0;
+            }
+
+            // VIP Info
+            if (ch.mocVip && ch.mocVip.length > 0) {
+                document.getElementById('vip-progress-container').style.display = 'block';
+                // Mock logic for VIP calculation (could be enhanced based on actual user tracking)
+                document.getElementById('vip-text').innerText = `Donate để trở thành VIP!`;
+            }
+
+            // Leaderboard
+            renderLeaderboard();
+
+            // Recent
+            renderRecent(data.ganDay || []);
+        }
+
+        function getInitials(name) {
+            return (name || 'A').substring(0, 2).toUpperCase();
+        }
+
+        function getColorFromName(name) {
+            const colors = ['#EC4899', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        function renderLeaderboard() {
+            const list = lbData[activeLbTab] || [];
+            const container = document.getElementById('lb-list');
+            
+            if (list.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:16px;">Chưa có dữ liệu</div>';
+                return;
+            }
+
+            container.innerHTML = list.map((item, index) => {
+                const rankClass = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+                const bg = getColorFromName(item.ten);
+                return `
+                    <div class="lb-item">
+                        <div class="lb-rank ${rankClass}">${index + 1}</div>
+                        <div class="lb-avatar" style="background:${bg}">${getInitials(item.ten)}</div>
+                        <div class="lb-info">
+                            <div class="lb-name">
+                                ${item.ten}
+                                ${index < 3 ? '<span class="vip-badge">VIP</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="lb-amount">${DonateCommon.dinhDangTien(item.tong)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderRecent(list) {
+            const container = document.getElementById('recent-list');
+            if (list.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:16px;">Chưa có donate nào gần đây</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                const bg = getColorFromName(item.ten);
+                return `
+                    <div class="recent-item">
+                        <div class="recent-avatar" style="background:${bg}">${getInitials(item.ten)}</div>
+                        <div class="recent-content">
+                            <div class="recent-header">
+                                <b>${item.ten}</b> <span>đã donate</span> <b style="color:var(--accent-pink)">${DonateCommon.dinhDangTien(item.soTien)}</b>
+                            </div>
+                            ${item.loiNhan ? `<div class="recent-message">${item.loiNhan}</div>` : ''}
+                            <div class="recent-time">${DonateCommon.thoiGianNgan(item.thoiGian)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function openModal1() {
+            const ten = document.getElementById('input-name').value.trim();
+            const soTien = parseInt(document.getElementById('input-amount').value);
+            const loiNhan = document.getElementById('input-message').value.trim();
+
+            if (!ten) return alert("Vui lòng nhập tên hiển thị");
+            if (!soTien || isNaN(soTien) || soTien <= 0) return alert("Vui lòng nhập số tiền hợp lệ");
+
+            const ch = currentData?.cauHinh || {};
+            if (ch.tienToiThieu && soTien < ch.tienToiThieu) return alert(`Số tiền tối thiểu là ${DonateCommon.dinhDangTien(ch.tienToiThieu)}`);
+            if (ch.tienToiDa && soTien > ch.tienToiDa) return alert(`Số tiền tối đa là ${DonateCommon.dinhDangTien(ch.tienToiDa)}`);
+
+            localStorage.setItem('dn_ten', ten);
+            
+            document.getElementById('m1-brand').innerText = ch.tenHienThi || 'Donate';
+            document.getElementById('m1-amount').innerText = DonateCommon.dinhDangTien(soTien);
+            
+            document.getElementById('modal-1').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            if (id === 'modal-2' && statusInterval) {
+                clearInterval(statusInterval);
+                statusInterval = null;
+            }
+        }
+
+        async function openModal2() {
+            closeModal('modal-1');
+            
+            const ten = document.getElementById('input-name').value.trim();
+            const soTien = parseInt(document.getElementById('input-amount').value);
+            const loiNhan = document.getElementById('input-message').value.trim();
+            
+            // Generate maDon
+            currentMaDon = 'DN' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
+            
+            try {
+                // Submit to API
+                const res = await DonateCommon.goi('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ten, soTien, loiNhan, maDon: currentMaDon })
+                });
+
+                if (res && res.ok) {
+                    showPaymentModal(ten, soTien, currentMaDon);
+                } else if (res && res.loi) {
+                    alert(res.loi);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Có lỗi xảy ra, vui lòng thử lại.');
+            }
+        }
+
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function showPaymentModal(ten, soTien, maDon) {
+            const ch = currentData?.cauHinh || {};
+            
+            document.getElementById('m2-amount').innerHTML = `${DonateCommon.dinhDangTien(soTien).replace(' VND', '')} <span style="font-size:1rem;color:var(--text-main);">VND</span>`;
+            document.getElementById('m2-bank-name').innerText = ch.tenNganHang || '';
+            document.getElementById('m2-account-name').innerText = ch.tenTaiKhoan || '';
+            document.getElementById('m2-account-no').innerText = ch.soTaiKhoan || '';
+            
+            const cleanName = removeVietnameseTones(ten).replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "").toUpperCase();
+            let noiDungCK = `${maDon} ${cleanName}`;
+            if (noiDungCK.length > 25) noiDungCK = noiDungCK.substring(0, 25);
+            
+            document.getElementById('m2-content').innerText = noiDungCK;
+
+            // Generate VietQR
+            const nganHang = ch.nganHang || '';
+            const soTaiKhoan = ch.soTaiKhoan || '';
+            const tenTaiKhoan = ch.tenTaiKhoan || '';
+            
+            const qrUrl = `https://img.vietqr.io/image/${nganHang}-${soTaiKhoan}-compact2.png?amount=${soTien}&addInfo=${encodeURIComponent(noiDungCK)}&accountName=${encodeURIComponent(tenTaiKhoan)}`;
+            document.getElementById('m2-qr').src = qrUrl;
+
+            document.getElementById('m2-status').className = 'status-badge waiting';
+            document.getElementById('m2-status').innerText = 'Đang chờ thanh toán...';
+
+            document.getElementById('modal-2').classList.add('active');
+
+            // Start polling status
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(checkStatus, 3000);
+        }
+
+        async function checkStatus() {
+            if (!currentMaDon) return;
+            try {
+                const res = await DonateCommon.goi(`/api/status/${currentMaDon}`);
+                if (res && res.ok && res.daXacNhan) {
+                    document.getElementById('m2-status').className = 'status-badge success';
+                    document.getElementById('m2-status').innerText = 'Thanh toán thành công!';
+                    clearInterval(statusInterval);
+                    statusInterval = null;
+                    
+                    // Reload data
+                    setTimeout(() => {
+                        loadData();
+                        closeModal('modal-2');
+                        // Reset form
+                        document.getElementById('input-amount').value = '';
+                        document.getElementById('input-message').value = '';
+                    }, 2000);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function copyData(id) {
+            const text = document.getElementById(id).innerText;
+            DonateCommon.copy(text);
+        }
+
+        function downloadQR() {
+            const img = document.getElementById('m2-qr');
+            if (!img.src) return;
+            
+            fetch(img.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `QR_${currentMaDon}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(() => alert('Không thể tải mã QR'));
+        }
+
+        // Init
+        loadData();
+        setInterval(loadData, 30000);
+
+    </script>
+</body>
+</html>
