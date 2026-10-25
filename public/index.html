@@ -897,7 +897,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-modal btn-cancel" onclick="closeModal('modal-2')">Hủy</button>
-                <button class="btn-modal btn-continue" onclick="closeModal('modal-2')">Tôi đã thanh toán →</button>
+                <button class="btn-modal btn-continue" id="btn-confirm-paid" onclick="handlePaidClick()" style="opacity:0.5;cursor:not-allowed">⏳ Chờ xác nhận...</button>
             </div>
         </div>
     </div>
@@ -1152,7 +1152,15 @@
             document.getElementById('m2-qr').src = qrUrl;
 
             document.getElementById('m2-status').className = 'status-badge waiting';
-            document.getElementById('m2-status').innerText = 'Đang chờ thanh toán...';
+            document.getElementById('m2-status').innerText = 'Đang chờ xác nhận thanh toán...';
+
+            const btnPaid = document.getElementById('btn-confirm-paid');
+            if (btnPaid) {
+                btnPaid.dataset.confirmed = '0';
+                btnPaid.style.opacity = '0.5';
+                btnPaid.style.cursor = 'not-allowed';
+                btnPaid.innerText = '⏳ Chờ xác nhận...';
+            }
 
             document.getElementById('modal-2').classList.add('active');
 
@@ -1161,24 +1169,41 @@
             statusInterval = setInterval(checkStatus, 3000);
         }
 
+        function handlePaidClick() {
+            const btnPaid = document.getElementById('btn-confirm-paid');
+            if (btnPaid && btnPaid.dataset.confirmed === '1') {
+                loadData();
+                closeModal('modal-2');
+                document.getElementById('input-amount').value = '';
+                document.getElementById('input-message').value = '';
+            } else {
+                alert('Hệ thống đã gửi thông báo cho chủ kênh. Nút "Tôi đã thanh toán" sẽ mở ngay khi chủ kênh xác nhận đã nhận chuyển khoản!');
+            }
+        }
+
         async function checkStatus() {
             if (!currentMaDon) return;
             try {
                 const res = await DonateCommon.goi(`/api/status/${currentMaDon}`);
                 if (res && res.ok && res.daXacNhan) {
                     document.getElementById('m2-status').className = 'status-badge success';
-                    document.getElementById('m2-status').innerText = 'Thanh toán thành công!';
+                    document.getElementById('m2-status').innerText = 'Đã xác nhận thanh toán!';
+                    const btnPaid = document.getElementById('btn-confirm-paid');
+                    if (btnPaid) {
+                        btnPaid.dataset.confirmed = '1';
+                        btnPaid.style.opacity = '1';
+                        btnPaid.style.cursor = 'pointer';
+                        btnPaid.innerText = '✓ Tôi đã thanh toán →';
+                    }
                     clearInterval(statusInterval);
                     statusInterval = null;
-                    
-                    // Reload data
-                    setTimeout(() => {
-                        loadData();
-                        closeModal('modal-2');
-                        // Reset form
-                        document.getElementById('input-amount').value = '';
-                        document.getElementById('input-message').value = '';
-                    }, 2000);
+                    loadData();
+                } else if (res && res.ok && res.trangThai === 'Từ chối') {
+                    document.getElementById('m2-status').className = 'status-badge';
+                    document.getElementById('m2-status').style.color = '#ef4444';
+                    document.getElementById('m2-status').innerText = 'Giao dịch bị từ chối';
+                    clearInterval(statusInterval);
+                    statusInterval = null;
                 }
             } catch (e) {
                 console.error(e);

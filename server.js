@@ -12,8 +12,8 @@ const sess = require('./lib/session');
 const MAT_KHAU_MAC_DINH = 'admin123';
 const PORT = process.env.PORT || 3000;
 
-// Token bí mật dùng cho link xác nhận trong email (tạo mới mỗi lần server khởi động)
-const EMAIL_SECRET = crypto.randomBytes(32).toString('hex');
+// Token bí mật dùng cho link xác nhận trong email (cố định theo DB để không hết hạn khi Render restart)
+const EMAIL_SECRET = crypto.createHash('sha256').update(process.env.DATABASE_URL || 'donate-secret-minhthu').digest('hex');
 
 let database;
 

@@ -150,9 +150,9 @@
                 <h2>Giao dịch</h2>
                 <div class="filter-tabs" id="tx-filters">
                     <button class="filter-btn active" data-filter="all">Tất cả</button>
-                    <button class="filter-btn" data-filter="cho_xac_nhan">Chờ xác nhận</button>
-                    <button class="filter-btn" data-filter="da_xac_nhan">Đã xác nhận</button>
-                    <button class="filter-btn" data-filter="tu_choi">Từ chối</button>
+                    <button class="filter-btn" data-filter="Chờ xác nhận">Chờ xác nhận</button>
+                    <button class="filter-btn" data-filter="Đã xác nhận">Đã xác nhận</button>
+                    <button class="filter-btn" data-filter="Từ chối">Từ chối</button>
                 </div>
                 <div class="table-container">
                     <table>
@@ -415,10 +415,13 @@
         });
     });
 
+    let txRefreshInterval = null;
     async function loadDashboard() {
         document.getElementById('warning-banner').style.display = canDoiMatKhau ? 'block' : 'none';
         loadTransactions();
         loadConfig();
+        if (txRefreshInterval) clearInterval(txRefreshInterval);
+        txRefreshInterval = setInterval(() => { if (token) loadTransactions(); }, 10000);
     }
 
     async function loadTransactions() {
@@ -440,12 +443,12 @@
         today.setHours(0,0,0,0);
 
         allTx.forEach(tx => {
-            if (tx.trangThai === 'da_xac_nhan') {
+            if (tx.trangThai === 'Đã xác nhận') {
                 confirmedAmt += tx.soTien;
                 confirmedCount++;
                 const txDate = new Date(tx.thoiGian);
                 if (txDate >= today) todayAmt += tx.soTien;
-            } else if (tx.trangThai === 'cho_xac_nhan') {
+            } else if (tx.trangThai === 'Chờ xác nhận') {
                 pendingCount++;
             }
         });
@@ -476,21 +479,21 @@
             const tr = document.createElement('tr');
             
             let statusBadge = '';
-            if (tx.trangThai === 'cho_xac_nhan') statusBadge = '<span class="badge badge-amber">Chờ</span>';
-            else if (tx.trangThai === 'da_xac_nhan') statusBadge = '<span class="badge badge-green">Đã xác nhận</span>';
+            if (tx.trangThai === 'Chờ xác nhận') statusBadge = '<span class="badge badge-amber">Chờ xác nhận</span>';
+            else if (tx.trangThai === 'Đã xác nhận') statusBadge = '<span class="badge badge-green">Đã xác nhận</span>';
             else statusBadge = '<span class="badge badge-red">Từ chối</span>';
 
             const fmt = (typeof DonateCommon !== 'undefined' && DonateCommon.dinhDangTien) ? DonateCommon.dinhDangTien : (v => v.toLocaleString() + 'đ');
             const timeStr = new Date(tx.thoiGian).toLocaleString('vi-VN');
             
             let actions = '';
-            if (tx.trangThai === 'cho_xac_nhan') {
+            if (tx.trangThai === 'Chờ xác nhận') {
                 actions = `
-                    <button class="btn btn-green" onclick="confirmTx('${tx.maDon}', 'da_xac_nhan')">✓</button>
-                    <button class="btn btn-red" onclick="confirmTx('${tx.maDon}', 'tu_choi')">✕</button>
+                    <button class="btn btn-green" onclick="confirmTx('${tx.maDon}', 'Đã xác nhận')">✓ Xác nhận</button>
+                    <button class="btn btn-red" onclick="confirmTx('${tx.maDon}', 'Từ chối')">✕ Từ chối</button>
                 `;
             } else {
-                actions = `<button class="btn btn-outline" onclick="confirmTx('${tx.maDon}', 'cho_xac_nhan')">↺</button>`;
+                actions = `<button class="btn btn-outline" onclick="confirmTx('${tx.maDon}', 'Chờ xác nhận')">↺ Chờ lại</button>`;
             }
 
             tr.innerHTML = `
