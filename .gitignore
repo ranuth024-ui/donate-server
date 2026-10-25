@@ -1,5 +1,10 @@
 node_modules/
 *.db
+*.db-shm
+*.db-wal
 public/uploads/*
 !public/uploads/.gitkeep
 .env
+npm-install-log.txt
+scratch_test.js
+test.js

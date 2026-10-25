@@ -49,7 +49,7 @@ async function guiEmailThongBao(ch, d) {
     smtpPort = 465;
   }
 
-  const baseUrl = ch.baseUrl || `http://localhost:${PORT}`;
+  const baseUrl = (ch.baseUrl || process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`).replace(/\/+$/, '');
   const tokenXacNhan = taoTokenEmail(d.maDon, db.TRANG_THAI.DA);
   const tokenTuChoi = taoTokenEmail(d.maDon, db.TRANG_THAI.TU_CHOI);
 
@@ -264,8 +264,11 @@ app.get('/api/admin/list', xacThuc, async (req, res) => {
 app.get('/api/admin/config', xacThuc, async (req, res) => {
   try {
     const ch = await db.docCauHinh(database);
-    // Chỉ trả các khóa liên quan, loại bỏ QT_SALT/QT_HASH
+    // Chỉ trả các khóa liên quan, loại bỏ QT_SALT/QT_HASH và FILE_*
     const { QT_SALT, QT_HASH, ...cauHinh } = ch;
+    Object.keys(cauHinh).forEach((k) => {
+      if (k.startsWith('FILE_')) delete cauHinh[k];
+    });
     res.json({ ok: true, cauHinh });
   } catch (err) {
     console.error(err);
@@ -305,8 +308,8 @@ app.post('/api/admin/config', xacThuc, async (req, res) => {
   }
 });
 
-// Upload ảnh (base64) → lưu vào public/uploads/ → trả URL
-app.post('/api/admin/upload', xacThuc, express.json({ limit: '5mb' }), (req, res) => {
+// Upload ảnh (base64) → lưu vào public/uploads/ VÀ database (để không mất khi Render restart) → trả URL
+app.post('/api/admin/upload', xacThuc, express.json({ limit: '5mb' }), async (req, res) => {
   try {
     const { data, loai } = req.body || {};
     if (!data) return res.status(400).json({ ok: false, loi: 'Thiếu dữ liệu ảnh.' });
@@ -314,8 +317,13 @@ app.post('/api/admin/upload', xacThuc, express.json({ limit: '5mb' }), (req, res
     // data = "data:image/png;base64,iVBOR..." hoặc raw base64
     let base64 = data;
     let ext = 'png';
-    const m = data.match(/^data:image\/(png|jpe?g|gif|webp);base64,(.+)$/i);
-    if (m) { ext = m[1] === 'jpeg' ? 'jpg' : m[1]; base64 = m[2]; }
+    let mime = 'image/png';
+    const m = data.match(/^data:(image\/(png|jpe?g|gif|webp));base64,(.+)$/i);
+    if (m) {
+      mime = m[1].toLowerCase();
+      ext = m[2].toLowerCase() === 'jpeg' ? 'jpg' : m[2].toLowerCase();
+      base64 = m[3];
+    }
 
     const buf = Buffer.from(base64, 'base64');
     if (buf.length > 4 * 1024 * 1024) return res.status(400).json({ ok: false, loi: 'Ảnh quá lớn (tối đa 4MB).' });
@@ -326,11 +334,34 @@ app.post('/api/admin/upload', xacThuc, express.json({ limit: '5mb' }), (req, res
     fs.mkdirSync(path.dirname(duongDan), { recursive: true });
     fs.writeFileSync(duongDan, buf);
 
+    // Lưu thêm vào DB để bền vững trên Render Free Tier
+    await db.ghiCauHinh(database, { ['FILE_' + ten]: { mime, base64 } });
+
     const url = '/uploads/' + ten;
     res.json({ ok: true, url });
   } catch (err) {
     res.status(500).json({ ok: false, loi: 'Lỗi lưu ảnh: ' + err.message });
   }
+});
+
+// Phục vụ ảnh từ DB nếu file trên ổ đĩa bị xoá sau khi Render khởi động lại
+app.get('/uploads/:ten', async (req, res) => {
+  try {
+    const ten = String(req.params.ten || '').replace(/[^a-zA-Z0-9._-]/g, '');
+    const ch = await db.docCauHinh(database);
+    const fileData = ch['FILE_' + ten];
+    if (!fileData || !fileData.base64) return res.status(404).end();
+    const buf = Buffer.from(fileData.base64, 'base64');
+    res.set('Content-Type', fileData.mime || 'image/png');
+    res.set('Cache-Control', 'public, max-age=31536000');
+    res.send(buf);
+  } catch (err) {
+    res.status(500).end();
+  }
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 app.post('/api/admin/change-password', xacThuc, async (req, res) => {
